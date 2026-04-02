@@ -1,0 +1,4 @@
+/home/d31vy/repository/bip-teste-integracao/ejb-module/src/main/java/com/br/ejb/entity/Beneficio.java
+/home/d31vy/repository/bip-teste-integracao/ejb-module/src/main/java/com/br/ejb/service/BeneficioEjbService.java
+/home/d31vy/repository/bip-teste-integracao/ejb-module/src/main/java/com/br/ejb/service/BeneficioEjbServiceRemote.java
+/home/d31vy/repository/bip-teste-integracao/ejb-module/src/main/java/com/br/ejb/exception/BeneficioException.java
