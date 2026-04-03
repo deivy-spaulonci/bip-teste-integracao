@@ -4,7 +4,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 
-@SpringBootApplication(scanBasePackages = {"com.br.backendmodule", "com.br.ejb.service"})
+@SpringBootApplication(scanBasePackages = "com.br")
 public class BackendModuleApplication {
 
     public static void main(String[] args) {

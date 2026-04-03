@@ -7,13 +7,13 @@ import {Beneficio} from '../model/beneficio';
   providedIn: 'root',
 })
 export class BenificioService {
-  ROOT:string="beneficio";
+  ROOT:string="beneficios";
 
   constructor(private defaultService:DefaultService) {
   }
 
   getBeneficioPage(url:string): Observable<any>{
-    return this.defaultService.get(this.ROOT+'/page'+url);
+    return this.defaultService.get(this.ROOT+url);
   }
 
   getBeneficioById(id:number): Observable<Beneficio>{
@@ -24,8 +24,8 @@ export class BenificioService {
     return this.defaultService.delete(id,this.ROOT)
   }
 
-  update(beneficio:Beneficio): Observable<Beneficio>{
-    return this.defaultService.update(beneficio, this.ROOT)
+  update(id:number,beneficio:Beneficio): Observable<Beneficio>{
+    return this.defaultService.update(beneficio, this.ROOT+'/'+id)
   }
 
   create(beneficio:Beneficio): Observable<Beneficio>{

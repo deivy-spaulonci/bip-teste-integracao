@@ -17,7 +17,6 @@ export class DefaultService {
 
   get(api:string): Observable<any> {
     console.log(`default servcie ${this.ROOT}${api}`);
-    // console.log('>>>>>>> '+JSON.stringify(this.httpOptions))
     return this.http.get<any>(`${this.ROOT}${api}`, this.httpOptions);
   }
 

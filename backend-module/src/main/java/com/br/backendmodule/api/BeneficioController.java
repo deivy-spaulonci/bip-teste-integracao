@@ -1,98 +1,79 @@
 package com.br.backendmodule.api;
 
-import com.br.backendmodule.BeneficioEjbAdapter;
 import com.br.backendmodule.dto.BeneficioDTO;
-import com.br.backendmodule.mapper.BeneficioMapper;
-import com.br.ejb.entity.Beneficio;
+import com.br.backendmodule.dto.request.BeneficioRequestCreateDTO;
+import com.br.backendmodule.dto.request.BeneficioRequestUpdateDTO;
+import com.br.backendmodule.dto.response.BeneficioResponseDTO;
+import com.br.backendmodule.dto.TransferRequestDTO;
+import com.br.backendmodule.service.BeneficioService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Positive;
-import lombok.Getter;
-import lombok.Setter;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.math.BigDecimal;
 import java.util.List;
-import java.util.stream.Collectors;
+
+import static org.springframework.http.ResponseEntity.ok;
 
 @RestController
 @RequestMapping("/api/v1/beneficios")
 @Tag(name = "Benefícios", description = "apis para gerenciamento de benefícios")
 public class BeneficioController {
 
-    private final BeneficioEjbAdapter beneficioEjbAdapter;
-    private final BeneficioMapper beneficioMapper;
+    private final BeneficioService beneficioService;
 
-    public BeneficioController(@Lazy BeneficioEjbAdapter beneficioEjbAdapter, BeneficioMapper beneficioMapper) {
-        this.beneficioEjbAdapter = beneficioEjbAdapter;
-        this.beneficioMapper = beneficioMapper;
+    public BeneficioController(BeneficioService beneficioService)
+    {
+        this.beneficioService = beneficioService;
     }
 
     @GetMapping
     @Operation(summary = "Listar os benefícios")
-    public List<BeneficioDTO> list()
+    @ResponseStatus(HttpStatus.OK)
+    public List<BeneficioResponseDTO> list()
     {
-        return beneficioEjbAdapter.getService().findAll().stream().map(beneficioMapper::toDTO).collect(Collectors.toList());
+        return beneficioService.findAll();
     }
 
     @GetMapping("/{id}")
     @Operation(summary = "Buscar por ID")
-    public BeneficioDTO getById(@PathVariable("id") Long id) {
-        Beneficio beneficio = beneficioEjbAdapter.getService().findById(id);
-        return beneficioMapper.toDTO(beneficio);
+    @ResponseStatus(HttpStatus.OK)
+    public ResponseEntity<BeneficioResponseDTO> getById(@PathVariable("id") Long id) {
+        return ok(beneficioService.findById(id));
     }
 
     @PutMapping("/{id}")
     @Operation(summary = "Atualizar Benefício que ja existe")
-    public BeneficioDTO update(@PathVariable("id") Long id, @Valid @RequestBody BeneficioDTO beneficioDTO) {
-        beneficioDTO.setId(id);
-        Beneficio beneficio = beneficioMapper.toEntity(beneficioDTO);
-        Beneficio updated = beneficioEjbAdapter.getService().update(beneficio);
-        return beneficioMapper.toDTO(updated);
+    public ResponseEntity<BeneficioResponseDTO> update(@PathVariable("id") Long id, @Valid @RequestBody BeneficioRequestUpdateDTO beneficioRequestUpdateDTO) {
+        return ok(beneficioService.update(id,beneficioRequestUpdateDTO));
     }
 
     @PostMapping
-    @ResponseStatus(HttpStatus.CREATED)
     @Operation(summary = "Novo benefício")
-    public BeneficioDTO create(@Valid @RequestBody BeneficioDTO beneficioDTO) {
-        Beneficio beneficio = beneficioMapper.toEntity(beneficioDTO);
-        Beneficio created = beneficioEjbAdapter.getService().create(beneficio);
-        return beneficioMapper.toDTO(created);
+    @ResponseStatus(HttpStatus.CREATED)
+    public ResponseEntity<BeneficioResponseDTO> create(@Valid @RequestBody BeneficioRequestCreateDTO beneficioRequestCreateDTO) {
+        return ok(beneficioService.create(beneficioRequestCreateDTO));
     }
 
     @PostMapping("/transfer")
     @Operation(summary = "Transferir saldo entre benefícios")
-    public void transfer(@Valid @RequestBody TransferRequest request) {
-        beneficioEjbAdapter.getService().transfer(
-                request.getFromId(),
-                request.getToId(),
-                request.getAmount());
+    @ResponseStatus(HttpStatus.OK)
+    public void transfer(@Valid @RequestBody TransferRequestDTO request) {
+        beneficioService.transfer(request);
     }
 
     @DeleteMapping("/{id}")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @ResponseStatus(HttpStatus.OK)
     @Operation(summary = "Excluir um benefício")
-    public void delete(@PathVariable("id") Long id) {
-        beneficioEjbAdapter.getService().delete(id);
+    public ResponseEntity<?> delete(@PathVariable("id") Long id) {
+        try{
+            beneficioService.delet(id);
+            return new ResponseEntity<>(HttpStatus.OK);
+        }catch (Exception e){
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
     }
 
-
-    @Getter
-    @Setter
-    public static class TransferRequest {
-        @NotNull(message = "ID de origem é obrigatório")
-        private Long fromId;
-
-        @NotNull(message = "ID de destino é obrigatório")
-        private Long toId;
-
-        @NotNull(message = "Valor é obrigatório")
-        @Positive(message = "Valor deve ser positivo")
-        private BigDecimal amount;
-
-    }
 }

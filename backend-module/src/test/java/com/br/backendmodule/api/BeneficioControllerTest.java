@@ -2,17 +2,15 @@ package com.br.backendmodule.api;
 
 import com.br.backendmodule.BeneficioEjbAdapter;
 import com.br.backendmodule.dto.BeneficioDTO;
+import com.br.backendmodule.dto.TransferRequestDTO;
 import com.br.backendmodule.mapper.BeneficioMapper;
 import com.br.ejb.entity.Beneficio;
 import com.br.ejb.service.BeneficioEjbServiceRemote;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
@@ -176,11 +174,7 @@ class BeneficioControllerTest {
 
     @Test
     void testTransfer() throws Exception {
-        BeneficioController.TransferRequest request = new BeneficioController.TransferRequest();
-        request.setFromId(1L);
-        request.setToId(2L);
-        request.setAmount(new BigDecimal("55.00"));
-
+        TransferRequestDTO request = new TransferRequestDTO(1L,2L,new BigDecimal("55.00"));
         mockMvc.perform(post("/api/v1/beneficios/transfer")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))

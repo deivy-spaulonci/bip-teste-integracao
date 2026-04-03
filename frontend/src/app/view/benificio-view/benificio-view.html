@@ -1,1 +1,64 @@
-<p>benificio-view works!</p>
+<h2>Beneficios</h2>
+
+<div id="grid">
+<form [formGroup]="form" (ngSubmit)="submit()">
+  <h3 class="title-soft" *ngIf="edicao">Modo Edicao id: {{idEdicao}}</h3>
+  <div>
+    <label>Nome :</label>
+    <input type="text" formControlName="nome" />
+    <small *ngIf="form.get('nome')?.invalid && form.get('nome')?.touched" class="error">
+      Nome é obrigatório
+    </small>
+  </div>
+
+  <div>
+    <label>Descrição :</label>
+    <textarea formControlName="descricao"></textarea>
+  </div>
+
+  <div>
+    <label>Valor :</label>
+    <input type="text" formControlName="valor" (input)="onValorInput($event)" />
+  </div>
+
+  <div>
+    <label>
+      Ativo :
+      <input type="checkbox" formControlName="ativo"/>
+    </label>
+  </div>
+
+  <div style="display: grid; grid-template-columns: 1fr 1fr; align-items: center; justify-content: center;" >
+  <button type="submit" [disabled]="form.invalid">Salvar</button>
+  <button type="submit" class="bt-cancelar" *ngIf="edicao" (click)="cancelarEdicao()">Cancelar</button>
+  </div>
+
+</form>
+
+<table>
+    <thead>
+        <tr>
+            <th>Nome</th>
+            <th>Descrtição</th>
+            <th>Valor</th>
+            <th>Ativo</th>
+            <th>Ações</th>
+        </tr>
+    </thead>
+    <tbody *ngIf="beneficioResp$ | async as beneficios">
+        <tr *ngFor="let b of beneficios">
+            <td>{{b.nome}}</td>
+            <td>{{b.descricao}}</td>
+            <td>{{b.valor}}</td>
+            <td ngClass]="b.ativo ? 'status-active' : 'status-inactive'">
+              {{ b.ativo ? 'Ativo' : 'Inativo' }}
+            </td>
+             <td class="actions">
+              <button class="btn-edit" (click)="editar(b.id)">Editar</button>
+              <button class="btn-delete" (click)="excluir(b.id)">Excluir</button>
+            </td>
+        </tr>
+    </tbody>
+</table>
+
+</div>
