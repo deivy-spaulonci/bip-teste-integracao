@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import {HttpClient, HttpHeaders} from '@angular/common/http';
 import {Observable} from 'rxjs';
+import { TransferRequestDTO } from '../model/transferRequestDTO';
 
 @Injectable({
   providedIn: 'root'
@@ -34,5 +35,10 @@ export class DefaultService {
   update(obj: any, api: string): Observable<any> {
     console.log(`${this.ROOT}${api}`);
     return this.http.put<any>(this.ROOT + api, obj, this.httpOptions);
+  }
+
+  post(obj: any, api: string): Observable<any> {
+    console.log(`${this.ROOT}${api}`);
+    return this.http.post<any>(this.ROOT + api, obj, this.httpOptions);
   }
 }

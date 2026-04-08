@@ -3,13 +3,20 @@ import { DefaultService } from '../../service/default.service';
 import { BenificioService } from '../../service/benificio-service';
 import { Observable } from 'rxjs';
 import { CommonModule } from '@angular/common';
-import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
+import {
+  FormBuilder,
+  FormGroup,
+  Validators,
+  ReactiveFormsModule,
+  FormsModule,
+} from '@angular/forms';
 import { Beneficio } from '../../model/beneficio';
+import { TransferRequestDTO } from '../../model/transferRequestDTO';
 
 @Component({
   selector: 'app-benificio-view',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, FormsModule],
   templateUrl: './benificio-view.html',
   styleUrl: './benificio-view.css',
 })
@@ -18,6 +25,8 @@ export class BenificioView implements OnInit {
   form!: FormGroup;
   edicao: boolean = false;
   idEdicao: number = 0;
+  transferncia!: TransferRequestDTO;
+  selecionados: any[] = [];
 
   constructor(
     private beneficioService: BenificioService,
@@ -26,6 +35,7 @@ export class BenificioView implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    this.transferncia = new TransferRequestDTO();
     this.form = this.fb.group({
       nome: ['', [Validators.required, Validators.maxLength(100)]],
       descricao: ['', [Validators.required]],
@@ -39,6 +49,34 @@ export class BenificioView implements OnInit {
 
   loadBeneficio() {
     this.beneficioResp$ = this.beneficioService.getBeneficioPage('');
+  }
+
+  toggleSelecionado(item: any) {
+    if (this.selecionados.includes(item)) {
+      this.selecionados = this.selecionados.filter((i) => i !== item);
+    } else {
+      if (this.selecionados.length >= 2) {
+        alert('Selecione no máximo 2 registros');
+        return;
+      }
+      this.selecionados.push(item);
+    }
+  }
+
+  isDisabled(item: any): boolean {
+    return this.selecionados.length >= 2 && !this.selecionados.includes(item);
+  }
+
+  origem(): any {
+    return this.selecionados[0];
+  }
+
+  destino(): any {
+    return this.selecionados[1];
+  }
+
+  isHabilitaTransf(){
+    return this.selecionados.length >= 2 && this.transferncia.amount > 0;
   }
 
   editar(id: number) {
@@ -63,6 +101,7 @@ export class BenificioView implements OnInit {
           this.form.reset();
           this.edicao = false;
           this.idEdicao = 0;
+          this.selecionados = [];
           this.cdr.markForCheck();
         },
         error: (err) => {
@@ -115,11 +154,7 @@ export class BenificioView implements OnInit {
     const input = event.target;
 
     const formatted = this.formatCurrency(input.value);
-
-    // atualiza visualmente
     input.value = formatted;
-
-    // opcional: salvar valor numérico limpo no form
     const numeric = this.parseCurrency(formatted);
 
     this.form.patchValue({ valor: numeric }, { emitEvent: false });
@@ -130,27 +165,41 @@ export class BenificioView implements OnInit {
 
     return Number(
       value
-        .replace(/\./g, '') // remove milhar
-        .replace(',', '.'), // troca decimal
+        .replace(/\./g, '')
+        .replace(',', '.'),
     );
   }
 
   formatCurrency(value: string): string {
     if (!value) return '';
-
-    // remove tudo que não for número
     let numeric = value.replace(/\D/g, '');
-
-    // evita vazio
     if (!numeric) return '';
-
-    // converte para número (centavos)
     const number = Number(numeric) / 100;
-
-    // formata padrão BR
     return number.toLocaleString('pt-BR', {
       minimumFractionDigits: 2,
       maximumFractionDigits: 2,
     });
+  }
+
+  concluirTransferencia() {
+
+    this.transferncia.fromId = this.origem().id;
+    this.transferncia.toId = this.destino().id;
+
+    this.beneficioService.transfer(this.transferncia).subscribe({
+      next: (result) => {
+        alert('Transferencia realizada com sucesso');
+        this.loadBeneficio();
+        this.form.reset();
+        this.edicao = false;
+        this.idEdicao = 0;
+        this.transferncia = new TransferRequestDTO();
+        this.cdr.markForCheck();
+      },
+      error: (err) => {
+        alert('Erro ao transferir');
+      },
+    });
+
   }
 }

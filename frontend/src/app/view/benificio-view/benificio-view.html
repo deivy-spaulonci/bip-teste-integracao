@@ -11,22 +11,9 @@
     </small>
   </div>
 
-  <div>
-    <label>Descrição :</label>
-    <textarea formControlName="descricao"></textarea>
-  </div>
-
-  <div>
-    <label>Valor :</label>
-    <input type="text" formControlName="valor" (input)="onValorInput($event)" />
-  </div>
-
-  <div>
-    <label>
-      Ativo :
-      <input type="checkbox" formControlName="ativo"/>
-    </label>
-  </div>
+  <div>Descrição : <textarea formControlName="descricao"></textarea></div>
+  <div>Valor : <input type="text" formControlName="valor" (input)="onValorInput($event)" /></div>
+  <div>Ativo :<input type="checkbox" formControlName="ativo"/></div>
 
   <div style="display: grid; grid-template-columns: 1fr 1fr; align-items: center; justify-content: center;" >
   <button type="submit" [disabled]="form.invalid">Salvar</button>
@@ -34,31 +21,52 @@
   </div>
 
 </form>
-
-<table>
-    <thead>
-        <tr>
-            <th>Nome</th>
-            <th>Descrtição</th>
-            <th>Valor</th>
-            <th>Ativo</th>
-            <th>Ações</th>
-        </tr>
-    </thead>
-    <tbody *ngIf="beneficioResp$ | async as beneficios">
-        <tr *ngFor="let b of beneficios">
-            <td>{{b.nome}}</td>
-            <td>{{b.descricao}}</td>
-            <td>{{b.valor}}</td>
-            <td ngClass]="b.ativo ? 'status-active' : 'status-inactive'">
-              {{ b.ativo ? 'Ativo' : 'Inativo' }}
-            </td>
-             <td class="actions">
-              <button class="btn-edit" (click)="editar(b.id)">Editar</button>
-              <button class="btn-delete" (click)="excluir(b.id)">Excluir</button>
-            </td>
-        </tr>
-    </tbody>
-</table>
-
+<div>
+  <h3 class="title-soft" >Trnasferencia: </h3>
+  <div class="gridTransf">
+      <span>De: <i>{{ origem() ? origem().nome : ''}}</i></span>
+      <span>Para: <i>{{ destino() ? destino().nome : ''}}</i></span>
+      <div>Valor:
+        <input type="text" style="width: 200px;"
+          [(ngModel)]="transferncia.amount"/>
+      </div>
+      <button (click)="concluirTransferencia()"
+        id="bt-transf"
+        [disabled]="!isHabilitaTransf()">
+        Concluir Transferencia
+      </button>
+  </div>
+  <table>
+      <thead>
+          <tr>
+              <th [width]="10">Transferir</th>
+              <th>Nome</th>
+              <th>Descrição</th>
+              <th>Valor</th>
+              <th>Ativo</th>
+              <th>Ações</th>
+          </tr>
+      </thead>
+      <tbody *ngIf="beneficioResp$ | async as beneficios">
+          <tr *ngFor="let b of beneficios">
+              <td>
+                  <input type="checkbox"
+                  [checked]="selecionados.includes(b)"
+                  (change)="toggleSelecionado(b)"
+                  [disabled]="isDisabled(b)"/>
+              </td>
+              <td>{{b.nome}}</td>
+              <td>{{b.descricao}}</td>
+              <td>{{b.valor}}</td>
+              <td [ngClass]="b.ativo ? 'status-active' : 'status-inactive'">
+                {{ b.ativo ? 'Ativo' : 'Inativo' }}
+              </td>
+              <td class="actions">
+                <button class="btn-edit" (click)="editar(b.id)">Editar</button>
+                <button class="btn-delete" (click)="excluir(b.id)">Excluir</button>
+              </td>
+          </tr>
+      </tbody>
+  </table>
+</div>
 </div>
