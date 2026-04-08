@@ -1,10 +1,9 @@
 package com.br.backendmodule.api;
 
-import com.br.backendmodule.dto.BeneficioDTO;
+import com.br.backendmodule.dto.TransferRequestDTO;
 import com.br.backendmodule.dto.request.BeneficioRequestCreateDTO;
 import com.br.backendmodule.dto.request.BeneficioRequestUpdateDTO;
 import com.br.backendmodule.dto.response.BeneficioResponseDTO;
-import com.br.backendmodule.dto.TransferRequestDTO;
 import com.br.backendmodule.service.BeneficioService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;

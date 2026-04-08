@@ -14,6 +14,6 @@ public class OpenApiConfig {
                 .info(new Info()
                         .title("Benefícios API")
                         .version("1.0")
-                        .description("API para gerenciamento de benefícios"));
+                        .description("API para gestão de benefícios"));
     }
 }

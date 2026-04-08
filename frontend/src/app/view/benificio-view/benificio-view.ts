@@ -20,6 +20,7 @@ import { TransferRequestDTO } from '../../model/transferRequestDTO';
   templateUrl: './benificio-view.html',
   styleUrl: './benificio-view.css',
 })
+
 export class BenificioView implements OnInit {
   beneficioResp$!: Observable<any>;
   form!: FormGroup;

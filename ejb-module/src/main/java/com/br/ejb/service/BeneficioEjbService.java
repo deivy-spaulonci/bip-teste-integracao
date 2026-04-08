@@ -9,7 +9,6 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.OptimisticLockException;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.TypedQuery;
-import jakarta.xml.ws.ServiceMode;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 

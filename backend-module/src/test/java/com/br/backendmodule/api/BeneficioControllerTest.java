@@ -52,7 +52,6 @@ class BeneficioControllerTest {
 
     @BeforeEach
     void setUp() {
-        // O beneficioEjbAdapter real usará o mock beneficioEjbService injetado pelo Spring
     }
 
     @Test
